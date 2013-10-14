@@ -123,7 +123,7 @@ class Node(ElementHandler):
                 elif attr.get("Interrogative") == "True":
                     pos = "RI"
                 else:
-                    pos = "--"
+                    pos = "RI" # @@@
                 analysis = "{} ----{}-".format(pos, cng(attr))
             elif attr["Cat"] in ["verb"]:
                 analysis = "V- {}".format(ccat(attr))
