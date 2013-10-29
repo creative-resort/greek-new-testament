@@ -97,8 +97,8 @@ class Node(ElementHandler):
                     "Start", "End",
                     "nodeId", "morphId",
                     "Cat",
+                    "Type",
                     "Case", "Number", "Gender",
-                    "Relative", "Personal", "Demonstrative", "Interrogative",
                     "Tense", "Voice", "Mood",
                     "Person",
                     "Degree",
@@ -109,28 +109,37 @@ class Node(ElementHandler):
             analysis = attr["Cat"]
             if attr["Cat"] in ["noun"]:
                 analysis = "N- ----{}-".format(cng(attr))
+                assert attr.get("Type") in ["Common", "Proper", None], attr.get("Type")
             elif attr["Cat"] in ["det"]:
                 analysis = "RA ----{}-".format(cng(attr))
+                assert attr.get("Type") is None, attr.get("Type")
             elif attr["Cat"] in ["adj"]:
                 analysis = "A- ----{}{}".format(cng(attr), degree(attr))
+                assert attr.get("Type") is None, attr.get("Type")
             elif attr["Cat"] in ["pron"]:
-                if attr.get("Relative") == "True":
-                    pos = "RR"
-                elif attr.get("Demonstrative") == "True":
-                    pos = "RD"
-                elif attr.get("Personal") == "True":
-                    pos = "RP"
-                elif attr.get("Interrogative") == "True":
-                    pos = "RI"
-                else:
-                    pos = "RI" # @@@
+                pos = dict(Personal="RP", Relative="RR", Demonstrative="RD", Interrogative="RI", Indefinite="RI")[attr.get("Type", "Relative")]
                 analysis = "{} ----{}-".format(pos, cng(attr))
             elif attr["Cat"] in ["verb"]:
                 analysis = "V- {}".format(ccat(attr))
-            elif attr["Cat"] in ["prep", "conj", "adv", "ptcl", "intj"]:
-                analysis = "{}- --------".format(dict(prep="P", conj="C", adv="D", ptcl="X", intj="I")[attr["Cat"]])
+                assert attr.get("Type") is None, attr.get("Type")
+            elif attr["Cat"] in ["prep"]:
+                analysis = "P- --------"
+                assert attr.get("Type") in [None], attr.get("Type")
+            elif attr["Cat"] in ["intj"]:
+                analysis = "I- --------"
+                assert attr.get("Type") in [None], attr.get("Type")
+            elif attr["Cat"] in ["ptcl"]:
+                analysis = "X- --------"
+                assert attr.get("Type") in ["Conditional", ""], attr.get("Type")
+            elif attr["Cat"] in ["conj"]:
+                analysis = "C- --------"
+                assert attr.get("Type") in ["Adverbial", "Logical", ""], attr.get("Type")
+            elif attr["Cat"] in ["adv"]:
+                analysis = "D- --------"
+                assert attr.get("Type") in ["Indefinite", "Negative", ""], attr.get("Type")
             elif attr["Cat"] == "num":
                 analysis = "NU ----{}-".format(cng(attr))
+                assert attr.get("Type") is None, attr.get("Type")
             else:
                 raise Exception, attr["Cat"]
             
