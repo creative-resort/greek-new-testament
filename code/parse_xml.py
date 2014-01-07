@@ -130,13 +130,13 @@ class Node(ElementHandler):
                 assert attr.get("Type") in [None], attr.get("Type")
             elif attr["Cat"] in ["ptcl"]:
                 analysis = "X- --------"
-                assert attr.get("Type") in ["Conditional", ""], attr.get("Type")
+                assert attr.get("Type") in ["Conditional", None], attr.get("Type")
             elif attr["Cat"] in ["conj"]:
                 analysis = "C- --------"
-                assert attr.get("Type") in ["Adverbial", "Logical", ""], attr.get("Type")
+                assert attr.get("Type") in ["Adverbial", "Logical", None], attr.get("Type")
             elif attr["Cat"] in ["adv"]:
                 analysis = "D- --------"
-                assert attr.get("Type") in ["Indefinite", "Negative", ""], attr.get("Type")
+                assert attr.get("Type") in ["Indefinite", "Negative", None], attr.get("Type")
             elif attr["Cat"] == "num":
                 analysis = "NU ----{}-".format(cng(attr))
                 assert attr.get("Type") is None, attr.get("Type")
