@@ -10,14 +10,14 @@ def n(x):
 
 
 class ElementHandler(object):
-    
+
     def __init__(self, p, name, attr):
         self.p = p
         p.StartElementHandler = self.start_element
         p.EndElementHandler = self.end_element
         p.CharacterDataHandler = self.char_data
         self.start(name, attr)
-    
+
     def start_element(self, name, attr):
         cls = self.handlers.get(name)
         if cls:
@@ -27,23 +27,23 @@ class ElementHandler(object):
             handler.return_state = state
         else:
             raise Exception("%s got unknown element %s" % (self.__class__.__name__, name))
-    
+
     def end_element(self, name):
         self.end(name)
         self.p.StartElementHandler, self.p.EndElementHandler, self.p.CharacterDataHandler = self.return_state
         self.p.StartElementHandler = self.parent.start_element
         self.p.EndElementHandler = self.parent.end_element
         self.p.CharacterDataHandler = self.parent.char_data
-    
+
     def char_data(self, data):
         pass
-    
+
     def start(self, name, attr):
         pass
-    
+
     def end(self, name):
         pass
-    
+
     handlers = {}
 
 
@@ -89,7 +89,7 @@ def ccat(attr):
 
 
 class Node(ElementHandler):
-    
+
     def start(self, name, attr):
         if attr["nodeId"].endswith("0010"):  # leaf nodes
             for key in attr.keys():
@@ -105,7 +105,7 @@ class Node(ElementHandler):
                     "Unicode", "UnicodeLemma",
                 ]:
                     raise Exception, key
-            
+
             analysis = attr["Cat"]
             if attr["Cat"] in ["noun"]:
                 analysis = "N- ----{}-".format(cng(attr))
@@ -142,7 +142,7 @@ class Node(ElementHandler):
                 assert attr.get("Type") is None, attr.get("Type")
             else:
                 raise Exception, attr["Cat"]
-            
+
             print attr["morphId"], analysis, n(attr["Unicode"]).encode("utf-8"), n(attr["UnicodeLemma"]).encode("utf-8")
 
 
@@ -150,22 +150,22 @@ Node.handlers = dict(Node=Node)
 
 
 class Tree(ElementHandler):
-    
+
     handlers = dict(Node=Node)
 
 
 class Trees(ElementHandler):
-    
+
     handlers = dict(Tree=Tree)
 
 
 class Sentence(ElementHandler):
-    
+
     handlers = dict(Trees=Trees)
 
 
 class Sentences(ElementHandler):
-    
+
     handlers = dict(Sentence=Sentence)
 
 
@@ -176,7 +176,7 @@ class Root(ElementHandler):
         p.EndElementHandler = self.end_element
         p.CharacterDataHandler = self.char_data
         p.Parse(f.read())
-    
+
     handlers = dict(Sentences=Sentences)
 
 
